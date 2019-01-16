@@ -48,7 +48,7 @@ type alias Model =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { count = 0, shapeList = List.map (Shape.mapPair <| Shape.scale 0.5) initialShapeList }
+    ( { count = 0, shapeList = Shape.mapPairList (Shape.scale 0.5) initialShapeList }
     , Cmd.none
     )
 
@@ -66,20 +66,20 @@ update msg model =
         Tick t ->
             ( { model
                 | count = model.count + 1
-                , shapeList = List.map (Shape.mapPair <| Shape.scale (f model.count)) model.shapeList
+                , shapeList = Shape.mapPairList (Shape.scale (f 20.0 0.03 model.count)) model.shapeList
               }
             , Cmd.none
             )
 
 
-f : Int -> Float
-f count_ =
+f : Float -> Float -> Int -> Float
+f angularFrequency amplitude count_ =
     let
         t =
-            (toFloat count_) / 20.0
+            (toFloat count_) / angularFrequency
 
         w =
-            0.03 * (sin t)
+            amplitude * (sin t)
     in
         e ^ w
 

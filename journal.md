@@ -74,7 +74,8 @@ Very boring, so let's make something more interesting:
 
 ![Image](image/day1.png)
 
-The new element is the function below.  It permits one to make "graded" shapes.
+The new element is the function below.  It permits one to make "graded" shapes.  A shape is
+repeatedly shrunk by a factor `1/k^e` where `k` runs from `1` to `N` and where the exponent `e` is a number greater than 0.  The smaller it is, the the more slowly the shapes decrease in size. They are stacked one on top of the other with centers aligned.  Thus if they are semitransaparent, color builds up as one goes towards the center.
 
 ```
 renderGradientShape : Shape -> Int -> Float -> Float -> List (Svg msg)
@@ -89,4 +90,69 @@ renderGradientShape shape steps exponent alpha =
                 range
     in
         List.map render shapes
+```
+
+## Day 2
+
+The goal is to animate the previous day's work in a simple way.  We will do this by scaling each image by a factor `k(t)` which is a periodic function of time with values > 0.  To scale shapes, we introduce a function
+
+```
+scale : Float -> Shape -> Shape
+scale k shape =
+    { shape | r = k * shape.r }
+```
+
+Since different shapes have different rendering functions, we introduce some new types to handle this situation:
+
+```
+type RenderType
+    = R
+    | RG Int Float Float
+
+
+type alias ShapePair =
+    ( RenderType, Shape )
+```
+
+To transform a `ShapePair`, we use
+
+```
+mapPair : (Shape -> Shape) -> ShapePair -> ShapePair
+mapPair f ( renderType, shape ) =
+    ( renderType, f shape )
+```
+
+and to transform a `List ShapePair`, we use
+
+```
+mapPairList : (Shape -> Shape) -> List ShapePair -> List ShapePair
+mapPairList f listShapePair =
+    List.map (mapPair f) listShapePair
+```
+To animate the artwork, we use this line in the update function:
+
+```
+shapeList = Shape.mapPairList (Shape.scale (f 20.0 0.03 model.count)) model.shapeList
+```
+
+where
+
+```
+f : Float -> Float -> Int -> Float
+f angularFrequency amplitude count_ =
+    let
+        t =
+            (toFloat count_) / angularFrequency
+
+        w =
+            amplitude * (sin t)
+    in
+        e ^ w
+```
+
+The `model.count` value is provided by a subscription:
+
+```
+subscriptions model =
+    Time.every 100 Tick
 ```

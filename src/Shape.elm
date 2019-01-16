@@ -10,6 +10,7 @@ module Shape
         , move
         , scale
         , mapPair
+        , mapPairList
         )
 
 import Color
@@ -40,6 +41,10 @@ type alias Shape =
 type RenderType
     = R
     | RG Int Float Float
+
+
+type alias ShapePair =
+    ( RenderType, Shape )
 
 
 basic =
@@ -133,6 +138,11 @@ scale k shape =
     { shape | r = k * shape.r }
 
 
-mapPair : (Shape -> Shape) -> ( RenderType, Shape ) -> ( RenderType, Shape )
+mapPair : (Shape -> Shape) -> ShapePair -> ShapePair
 mapPair f ( renderType, shape ) =
     ( renderType, f shape )
+
+
+mapPairList : (Shape -> Shape) -> List ShapePair -> List ShapePair
+mapPairList f listShapePair =
+    List.map (mapPair f) listShapePair
