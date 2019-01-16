@@ -1,1 +1,1 @@
-elm make src/Day2.elm
+elm make src/Day2b.elm

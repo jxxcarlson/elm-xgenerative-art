@@ -9,6 +9,10 @@ module Shape
         , basic
         , move
         , scale
+        , changeHue
+        , changeSaturation
+        , changeLightness
+        , changeAlpha
         , mapPair
         , mapPairList
         )
@@ -136,6 +140,36 @@ move dx dy dr shape =
 scale : Float -> Shape -> Shape
 scale k shape =
     { shape | r = k * shape.r }
+
+
+changeHue : Float -> Shape -> Shape
+changeHue dh shape =
+    { shape | h = clampInCircle 0.0 1.0 (shape.h + dh) }
+
+
+changeSaturation : Float -> Shape -> Shape
+changeSaturation ds shape =
+    { shape | s = clampInCircle 0.0 1.0 (shape.s + ds) }
+
+
+changeLightness : Float -> Shape -> Shape
+changeLightness dl shape =
+    { shape | l = clampInCircle 0.0 1.0 (shape.l + dl) }
+
+
+changeAlpha : Float -> Shape -> Shape
+changeAlpha da shape =
+    { shape | a = clampInCircle 0.0 1.0 (shape.a + da) }
+
+
+clampInCircle : Float -> Float -> Float -> Float
+clampInCircle a b x =
+    if x < a then
+        b
+    else if x > b then
+        a
+    else
+        x
 
 
 mapPair : (Shape -> Shape) -> ShapePair -> ShapePair
