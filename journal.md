@@ -155,4 +155,14 @@ The `model.count` value is provided by a subscription:
 ```
 subscriptions model =
     Time.every 100 Tick
+
+...
+
+Tick t ->
+    ( { model
+        | count = model.count + 1
+        , shapeList = Shape.mapPairList ...
+      }
+    , Cmd.none
+    )
 ```
