@@ -13,6 +13,9 @@ module Shape
         , changeSaturation
         , changeLightness
         , changeAlpha
+        , changeX
+        , changeY
+        , setLightness
         , mapPair
         , mapPairList
         )
@@ -152,9 +155,34 @@ changeSaturation ds shape =
     { shape | s = clampInCircle 0.0 1.0 (shape.s + ds) }
 
 
+changeX : Int -> Float -> Shape -> Shape
+changeX k dx shape =
+    case modBy 2 k of
+        0 ->
+            { shape | x = clampInCircle 0 500 (shape.x + dx) }
+
+        _ ->
+            shape
+
+
+changeY : Int -> Float -> Shape -> Shape
+changeY k dy shape =
+    case modBy 2 k of
+        1 ->
+            { shape | y = clampInCircle 0 500 (shape.y + dy) }
+
+        _ ->
+            shape
+
+
 changeLightness : Float -> Shape -> Shape
 changeLightness dl shape =
-    { shape | l = clampInCircle 0.0 1.0 (shape.l + dl) }
+    { shape | l = clamp 0.1 0.8 (shape.l + dl) }
+
+
+setLightness : Float -> Shape -> Shape
+setLightness l shape =
+    { shape | l = l }
 
 
 changeAlpha : Float -> Shape -> Shape
